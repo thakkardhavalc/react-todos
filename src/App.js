@@ -1,23 +1,61 @@
-import logo from './logo.svg';
 import './App.css';
+import { useState } from 'react';
+import TodoTable from './components/TodoTable';
+import NewTodoForm from './components/NewTodoForm';
 
 function App() {
+
+  const [showAddTodoForm, setShowAddTodoForm] = useState(null)
+
+  const [todos, setTodos] = useState(
+    [
+      { rowNumber: 1, rowDescription: 'Feed puppy', rowAssigned: 'User One' },
+      { rowNumber: 2, rowDescription: 'Water plants', rowAssigned: 'User Two' },
+      { rowNumber: 3, rowDescription: 'Make dinner', rowAssigned: 'User One' },
+      { rowNumber: 4, rowDescription: 'Charge phone battery', rowAssigned: 'User Two' },
+      { rowNumber: 5, rowDescription: 'Call security', rowAssigned: 'User One' },
+      { rowNumber: 6, rowDescription: 'Call wifi provider', rowAssigned: 'User two' }
+    ]
+  );
+
+  const addTodo = (description, assigned) => {
+    let rowNumber = 0;
+    if (todos.length > 0) {
+      rowNumber = todos[todos.length - 1].rowNumber + 1;
+    } else {
+      rowNumber = 1;
+    }
+    const newTodo = {
+      rowNumber: rowNumber,
+      rowDescription: description,
+      rowAssigned: assigned
+    };
+    setTodos(todos => [...todos, newTodo]);
+  };
+
+  const deleteTodo = (deleteTodoRowNumber) => {
+    let filtered = todos.filter(function (value) {
+      return value.rowNumber !== deleteTodoRowNumber;
+    });
+    setTodos(filtered);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="mt-5 container">
+      <div className="card">
+        <div className="card-header">
+          Your Todo's
+        </div>
+        <div className="card-body">
+          <TodoTable todos={todos} deleteTodo={deleteTodo} />
+          <button className="btn btn-primary" onClick={() => setShowAddTodoForm(!showAddTodoForm)}>
+            { showAddTodoForm ? 'Close New Todo' : 'New Todo' }
+          </button>
+          
+          { showAddTodoForm && <NewTodoForm addTodo={addTodo} /> }
+          
+        </div>
+      </div>
     </div>
   );
 }
